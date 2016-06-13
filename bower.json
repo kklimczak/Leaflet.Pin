@@ -1,0 +1,25 @@
+{
+  "name": "leaflet-snap-polygon-dependencies",
+  "description": "Leaflet.Pin dependencies",
+  "main": "gulpfile.js",
+  "authors": [
+    "Konrad Klimczak <konrad.klimczak@comarch.com>"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "leaflet",
+    "snap",
+    "polygon"
+  ],
+  "homepage": "https://github.com/kklimczak/Leaflet.Pin",
+  "moduleType": [
+    "es6",
+    "globals",
+    "node"
+  ],
+  "dependencies": {
+    "leaflet": "0.7.7",
+    "leaflet-draw": "~0.3",
+    "leaflet-geometry": "~0.4.0"
+  }
+}
