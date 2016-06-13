@@ -37,11 +37,9 @@ L.Handler.MarkerPin = L.Handler.extend({
     marker.setOpacity(1);
     L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
     var latlng = marker.getLatLng();
-    console.log(e);
-    var closest = this._findClosestMarker(this._map, [L.polyline([[51,0],[51,1]])], latlng, 150, true);
-    console.log(closest);
-    if (closest != null) {
-      marker._latlng = closest.latlng;
+    this._closest = this._findClosestMarker(this._map, [L.polyline([[51,0],[51,1]])], latlng, 150, true);
+    if (this._closest != null) {
+      marker._latlng = this._closest.latlng;
       marker.update();
     }
   },
@@ -66,15 +64,23 @@ L.Draw.Feature.Pin = {
       this._pinning = new L.Handler.MarkerPin(this._map);
     }
     this._pinning.enable(marker);
-    // console.log(marker);
-    // this._mouseMarker.on('move', function (e) {
-    //   console.log(e);
-    //   marker._latlng = L.latLng(51,0);
-    //   marker.update();
-    // })
-    // if (this instanceof L.Marker) {
-    //   console.log('marker');
-    // }
+
+    marker.on('click', this._pin_on_click, this);
+  },
+
+  _pin_on_click: function (e) {
+      if (this._markers) {
+        var markerAmount = this._markers.length,
+        marker = this._markers[markerAmount-1];
+        if (e) {
+          marker.setLatLng(e.target._latlng);
+          if (this._poly) {
+            var polyPointsAmount = this._poly._latlngs.length;
+            this._poly._latlngs[polyPointsAmount - 1] = e.target._latlng;
+            this._poly.redraw();
+          }
+        }
+      }
   },
 
   _pin_on_disabled: function () {
