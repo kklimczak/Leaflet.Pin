@@ -69,5 +69,11 @@ map.addControl(drawControl);
 
 map.on('draw:created', function (e) {
   layer = e.layer;
+  layer.pin = L.Handler.MarkerPin(map, layer);
   drawnItems.addLayer(layer);
 });
+
+
+map.on('mousemove', function (e) {
+  //console.log(e.latlng);
+})
