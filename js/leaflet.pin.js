@@ -7,6 +7,7 @@ L.Handler.MarkerPin = L.Handler.extend({
 
   initialize: function(map, marker, options) {
     L.Handler.prototype.initialize.call(this, map);
+    L.Util.setOptions(this, options || {});
   },
 
   enable: function (marker) {
@@ -33,11 +34,15 @@ L.Handler.MarkerPin = L.Handler.extend({
 
   _updateLatLng: function (e) {
     var marker = e.target;
+
+    console.log(e.target);
+    console.log(this.options);
+
     marker.setIcon(marker.options.icon);
     marker.setOpacity(1);
     L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
     var latlng = marker.getLatLng();
-    this._closest = this._findClosestMarker(this._map, [L.polyline([[51,0],[51,1]])], latlng, 150, true);
+    this._closest = this._findClosestMarker(this._map, [L.polyline([[51,0],[51,1]])], latlng, this.options.distance, this.options.vertices);
     if (this._closest != null) {
       marker._latlng = this._closest.latlng;
       marker.update();
@@ -63,7 +68,15 @@ L.Draw.Feature.Pin = {
     if (!this.pinning) {
       this._pinning = new L.Handler.MarkerPin(this._map);
     }
+
+    if (this.options.vertices) {
+      this._pinning.options.vertices = this.options.vertices;
+    }
+    if (this.options.distance) {
+      this._pinning.options.distance = this.options.distance;
+    }
     this._pinning.enable(marker);
+
 
     marker.on('click', this._pin_on_click, this);
   },
@@ -88,6 +101,28 @@ L.Draw.Feature.Pin = {
     delete this._pinning;
   }
 };
+
+L.Edit.Marker.Pin = {
+  _pin_initialize: function () {
+    console.log('_pin_edit_initialize');
+    this._marker.on('dragstart', this._pin_on_dragstart, this);
+    this._marker.on('dragend', this._pin_on_dragend, this);
+  },
+
+  _pin_on_dragstart: function (e) {
+    if (this._marker._pinning) {
+      this._marker._pinning = new L.Handler.MarkerPin(this._marker._map);
+    }
+    this._marker._pinning.enable(this._marker);
+  },
+
+  _pin_on_dragend: function (e) {
+    this._marker._pinning.disable(this._marker);
+  }
+}
+
+L.Edit.Marker.include(L.Edit.Marker.Pin);
+L.Edit.Marker.addInitHook('_pin_initialize');
 
 L.Draw.Feature.include(L.Draw.Feature.Pin);
 L.Draw.Feature.addInitHook('_pin_initialize');

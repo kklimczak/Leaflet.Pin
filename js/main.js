@@ -39,7 +39,9 @@ var drawControl = new L.Control.Draw({
   draw: {
     polyline: {},
     polygon: {},
-    marker: {},
+    marker: {
+      distance: 250
+    },
     rectangle: false,
     circle: false
   },
@@ -66,8 +68,9 @@ map.addControl(drawControl);
 
 map.on('draw:created', function (e) {
   var layer = e.layer;
-  //layer.pin = L.Handler.MarkerPin(map, layer);
+  layer._pinning = L.Handler.MarkerPin(map);
   drawnItems.addLayer(layer);
+
 });
 
 
