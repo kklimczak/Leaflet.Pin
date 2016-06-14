@@ -37,17 +37,14 @@ var guideLayers = [
 
 var drawControl = new L.Control.Draw({
   draw: {
-    polyline: false,
+    polyline: {},
     polygon: {},
     marker: {},
     rectangle: false,
     circle: false
   },
   edit: {
-    featureGroup: drawnItems,
-    edit: {
-      selectedPathOptions: {}
-    }
+    featureGroup: drawnItems
   }
 });
 
@@ -68,8 +65,8 @@ L.geoJson(loadJson(), {
 map.addControl(drawControl);
 
 map.on('draw:created', function (e) {
-  layer = e.layer;
-  layer.pin = L.Handler.MarkerPin(map, layer);
+  var layer = e.layer;
+  //layer.pin = L.Handler.MarkerPin(map, layer);
   drawnItems.addLayer(layer);
 });
 
