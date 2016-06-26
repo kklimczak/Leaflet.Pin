@@ -76,4 +76,4 @@ map.on('draw:created', function (e) {
 
 map.on('mousemove', function (e) {
   //console.log(e.latlng);
-})
+});
