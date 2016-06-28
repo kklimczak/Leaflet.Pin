@@ -11,7 +11,6 @@
         },
 
         enable: function (marker) {
-            console.log('enable');
             if (marker) {
                 this._observeMarker(marker);
                 this._currentMarker = marker;
@@ -19,17 +18,14 @@
         },
 
         disable: function () {
-            console.log('disable');
             this._unobserveMarker();
         },
 
         _observeMarker: function (marker) {
-            console.log('observeMarker');
             marker.on('move', this._updateLatLng, this);
         },
 
         _unobserveMarker: function () {
-            console.log('unobserveMarker');
             this._currentMarker.off('move', this._updateLatLng, this);
         },
 
@@ -54,13 +50,11 @@
 
     L.Draw.Feature.Pin = {
         _pin_initialize: function () {
-            console.log('_pin_initialize');
             this.on('enabled', this._pin_on_enabled, this);
             this.on('disabled', this._pin_on_disabled, this);
         },
 
         _pin_on_enabled: function () {
-            console.log('_pin_on_enabled');
             var marker = this._mouseMarker;
             if (!this._pinning) {
                 this._pinning = new L.Handler.MarkerPin(this._map);
@@ -94,28 +88,19 @@
         },
 
         _pin_on_disabled: function () {
-            console.log('_pin_on_disabled');
             delete this._pinning;
         }
     };
 
     L.Edit.Marker.Pin = {
         _pin_initialize: function () {
-            console.log('_pin_edit_initialize');
             this._marker.on('dragstart', this._pin_on_dragstart, this);
             this._marker.on('dragend', this._pin_on_dragend, this);
-            this._marker.on('click', this._pin_on_click, this);
-        },
-
-        _pin_on_click: function (e) {
-            console.log(e);
-            console.log('marker clicked!');
         },
 
         _pin_on_dragstart: function (e) {
             if (!this._marker._pinning) {
                 this._marker._pinning = new L.Handler.MarkerPin(this._marker._map);
-                console.log('pinning created!');
             }
             this._marker._pinning.enable(this._marker);
         },

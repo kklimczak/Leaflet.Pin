@@ -68,7 +68,6 @@ map.addControl(drawControl);
 
 map.on('draw:created', function (e) {
   var layer = e.layer;
-  layer._pinning = L.Handler.MarkerPin(map);
   drawnItems.addLayer(layer);
 
 });
