@@ -1,4 +1,7 @@
-var map = L.map('map');
+var map = L.map('map', {
+  pin: true,
+  guideLayers: [L.polyline([[51, 0], [51, 1]])]
+});
 
 var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';

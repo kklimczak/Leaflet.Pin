@@ -11,14 +11,16 @@
         },
 
         enable: function (marker) {
-            if (marker) {
+            if (marker && this._map.options.pin) {
                 this._observeMarker(marker);
                 this._currentMarker = marker;
             }
         },
 
         disable: function () {
-            this._unobserveMarker();
+            if (this._map.options.pin) {
+                this._unobserveMarker();
+            }
         },
 
         _observeMarker: function (marker) {
@@ -35,17 +37,38 @@
             marker.setOpacity(1);
             L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
             var latlng = marker.getLatLng();
-            this._closest = this._findClosestMarker(this._map, [L.polyline([[51, 0], [51, 1]])], latlng, this.options.distance, this.options.vertices);
+            this._closest = this._findClosestMarker(this._map, latlng, this.options.distance, this.options.vertices);
             if (this._closest != null) {
                 marker._latlng = this._closest.latlng;
                 marker.update();
             }
         },
 
-        _findClosestMarker: function (map, layers, latlng, distance, vertices) {
-            return L.GeometryUtil.closestLayerSnap(map, layers, latlng, distance, vertices);
+        _findClosestMarker: function (map, latlng, distance, vertices) {
+            return L.GeometryUtil.closestLayerSnap(map, map._guides, latlng, distance, vertices);
         }
 
+    });
+
+    L.Map.Pin = {
+        _pin_initialize: function () {
+            this._guides = [];
+            for (var i = 0; i < this.options.guideLayers.length; i++) {
+                this.addGuideLayer(this.options.guideLayers[i]);
+            }
+        },
+
+        addGuideLayer: function (layer) {
+            this._guides.push(layer);
+        }
+    };
+
+    L.Map.include(L.Map.Pin);
+    L.Map.addInitHook('_pin_initialize');
+
+    L.Map.mergeOptions({
+        pin: false,
+        guideLayers: []
     });
 
     L.Draw.Feature.Pin = {
