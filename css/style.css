@@ -32,3 +32,12 @@ canvas  {
     width: 8px !important;
     height: 8px !important;
 }
+
+.leaflet-control-pin {
+  width: 26px;
+  height: 26px;
+}
+
+.leaflet-control-pin-enabled {
+  font-weight: bold;
+}

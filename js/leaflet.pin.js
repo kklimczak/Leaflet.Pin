@@ -138,4 +138,37 @@
 
     L.Draw.Feature.include(L.Draw.Feature.Pin);
     L.Draw.Feature.addInitHook('_pin_initialize');
+
+    L.Control.Pin = L.Control.extend({
+        options: {
+            position: 'topleft'
+        },
+
+        onAdd: function (map) {
+            this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-pin');
+            this._createButton();
+            this._updateButton();
+            return this._container;
+        },
+
+        _createButton: function () {
+            var button = L.DomUtil.create('a', '', this._container);
+            button.innerHTML += 'P';
+            L.DomEvent.on(button, 'click', this._togglePin, this);
+        },
+
+        _togglePin: function () {
+            this._map.options.pin = !this._map.options.pin;
+            this._updateButton();
+        },
+
+        _updateButton: function () {
+            var className = 'leaflet-control-pin-enabled';
+            if (this._map.options.pin) {
+                L.DomUtil.addClass(this._container, className);
+            } else {
+                L.DomUtil.removeClass(this._container, className);
+            }
+        }
+    });
 })();
