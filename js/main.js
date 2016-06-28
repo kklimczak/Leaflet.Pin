@@ -1,5 +1,6 @@
 var map = L.map('map', {
   pin: false,
+  pinControl: true,
   guideLayers: [L.polyline([[51, 0], [51, 1]])]
 });
 
@@ -43,7 +44,6 @@ L.geoJson(loadJson(), {
 
 
 map.addControl(drawControl);
-map.addControl(new L.Control.Pin());
 
 map.on('draw:created', function (e) {
   var layer = e.layer;

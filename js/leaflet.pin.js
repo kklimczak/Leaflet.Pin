@@ -56,6 +56,14 @@
             for (var i = 0; i < this.options.guideLayers.length; i++) {
                 this.addGuideLayer(this.options.guideLayers[i]);
             }
+
+            if (this.options.pinControl) {
+                this.addControl(new L.Control.Pin());
+            }
+        },
+
+        togglePin: function () {
+            this.options.pin = !this.options.pin;
         },
 
         addGuideLayer: function (layer) {
@@ -68,6 +76,7 @@
 
     L.Map.mergeOptions({
         pin: false,
+        pinControl: true,
         guideLayers: []
     });
 
@@ -158,7 +167,7 @@
         },
 
         _togglePin: function () {
-            this._map.options.pin = !this._map.options.pin;
+            this._map.togglePin();
             this._updateButton();
         },
 
