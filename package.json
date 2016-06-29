@@ -4,7 +4,7 @@
   "description": "Leaflet.Snap.Polygon dependencies",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/karma/bin/karma start karma.conf.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,11 @@
   },
   "homepage": "http://konradklimczak.pl",
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "jasmine-core": "2.4.1",
+    "karma": "1.1.0",
+    "karma-chrome-launcher": "1.0.1",
+    "karma-jasmine": "1.0.2",
+    "karma-phantomjs-launcher": "^1.0.1"
   }
 }
