@@ -1,7 +1,7 @@
 var map = L.map('map', {
   pin: false,
   pinControl: true,
-  guideLayers: [L.polyline([[51, 0], [51, 1]])]
+  guideLayers: []
 });
 
 var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -16,10 +16,14 @@ map.addLayer(drawnItems);
 
 var drawControl = new L.Control.Draw({
   draw: {
-    polyline: {},
-    polygon: {},
+    polyline: {
+      distance: 20
+    },
+    polygon: {
+      distance: 25
+    },
     marker: {
-      distance: 250
+      distance: 25
     },
     rectangle: false,
     circle: {}
@@ -41,13 +45,14 @@ L.geoJson(loadJson(), {
   }
 });
 
+map.addGuideLayer(drawnItems);
+
 
 map.addControl(drawControl);
 
 map.on('draw:created', function (e) {
   var layer = e.layer;
   drawnItems.addLayer(layer);
-  console.log(JSON.stringify(drawnItems.toGeoJSON()));
 
 });
 

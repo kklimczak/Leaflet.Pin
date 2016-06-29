@@ -25,6 +25,26 @@
 
         _observeMarker: function (marker) {
             marker.on('move', this._updateLatLng, this);
+
+            var guideList = [];
+
+            function parseGuideLayers(layer) {
+                if (layer._layers !== undefined) {
+                    for (var guide in layer._layers) {
+                        if (layer._layers.hasOwnProperty(guide)) {
+                            parseGuideLayers(layer._layers[guide]);
+                        }
+                    }
+                } else {
+                    guideList.push(layer);
+                }
+            }
+
+            for (var i = 0; i < this._map._guides.length; i++) {
+                parseGuideLayers(this._map._guides[i]);
+            }
+
+            this._guideList = guideList;
         },
 
         _unobserveMarker: function () {
@@ -37,15 +57,15 @@
             marker.setOpacity(1);
             L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
             var latlng = marker.getLatLng();
-            this._closest = this._findClosestMarker(this._map, latlng, this.options.distance, this.options.vertices);
+            this._closest = this._findClosestMarker(this._map, this._guideList, latlng, this.options.distance, this.options.vertices);
             if (this._closest != null) {
                 marker._latlng = this._closest.latlng;
                 marker.update();
             }
         },
 
-        _findClosestMarker: function (map, latlng, distance, vertices) {
-            return L.GeometryUtil.closestLayerSnap(map, map._guides, latlng, distance, vertices);
+        _findClosestMarker: function (map, guideList, latlng, distance, vertices) {
+            return L.GeometryUtil.closestLayerSnap(map, guideList, latlng, distance, vertices);
         }
 
     });
