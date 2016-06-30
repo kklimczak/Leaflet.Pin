@@ -53,11 +53,14 @@
 
         _updateLatLng: function (e) {
             var marker = e.target;
+            console.log(marker.getLatLng());
 
             marker.setOpacity(1);
             L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
             var latlng = marker.getLatLng();
             this._closest = this._findClosestMarker(this._map, this._guideList, latlng, this.options.distance, this.options.vertices);
+            // TODO disable pin feature to itself
+            console.log(this._closest);
             if (this._closest != null) {
                 marker._latlng = this._closest.latlng;
                 marker.update();
@@ -182,7 +185,6 @@
 
         _createButton: function () {
             var button = L.DomUtil.create('a', '', this._container);
-            button.innerHTML += 'P';
             L.DomEvent.on(button, 'click', this._togglePin, this);
         },
 
