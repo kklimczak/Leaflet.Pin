@@ -99,7 +99,7 @@
 
     L.Map.mergeOptions({
         pin: false,
-        pinControl: true,
+        pinControl: false,
         guideLayers: []
     });
 
