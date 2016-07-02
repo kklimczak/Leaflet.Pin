@@ -36,12 +36,15 @@
                         }
                     }
                 } else {
-                    guideList.push(layer);
+                    guideList.push(_.cloneDeep(layer));
                 }
             }
 
+
+
             for (var i = 0; i < this._map._guides.length; i++) {
-                parseGuideLayers(this._map._guides[i]);
+                var guide = this._map._guides[i];
+                parseGuideLayers(guide);
             }
 
             this._guideList = guideList;
@@ -53,14 +56,11 @@
 
         _updateLatLng: function (e) {
             var marker = e.target;
-            console.log(marker.getLatLng());
 
             marker.setOpacity(1);
             L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
             var latlng = marker.getLatLng();
             this._closest = this._findClosestMarker(this._map, this._guideList, latlng, this.options.distance, this.options.vertices);
-            // TODO disable pin feature to itself
-            console.log(this._closest);
             if (this._closest != null) {
                 marker._latlng = this._closest.latlng;
                 marker.update();
