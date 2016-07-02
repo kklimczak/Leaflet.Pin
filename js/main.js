@@ -53,7 +53,7 @@ map.addControl(drawControl);
 map.on('draw:created', function (e) {
   var layer = e.layer;
   drawnItems.addLayer(layer);
-
+  console.log(JSON.stringify(drawnItems.toGeoJSON()));
 });
 
 
