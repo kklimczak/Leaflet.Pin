@@ -2,8 +2,7 @@
 
 #### General ##
 
-Enable attaching of markers to other layers during draw or edit features with [demo](https://kklimczak.github.io/Leaflet.Pin/).
-Checkout demo.
+Enable attaching of markers to other layers during draw or edit features with **Leaflet.Draw**. Checkout [demo](https://kklimczak.github.io/Leaflet.Pin/).
 
 #### Dependencies ##
 
