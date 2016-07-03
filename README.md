@@ -58,4 +58,11 @@ For each feature (rectangle and circle not supported yet):
 | vertices | Boolean | true | Whether layers vertices add additional pin attraction. |
 
 
+#### Map methods
+
+| Method | Params | Description |
+|---|---|---|
+| addGuideLayer | ILayer or layerGroup | add new layer or layerGroup as guide layer/-s. |
+| togglePin | - | switch on/off pin |
+
 This plugin based on [Leaflet.Snap](https://github.com/makinacorpus/Leaflet.Snap).

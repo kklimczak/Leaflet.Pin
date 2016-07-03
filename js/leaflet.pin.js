@@ -28,6 +28,7 @@
 
             var guideList = [];
 
+            // We need to parse layerGroup to single layers and each add to guides array.
             function parseGuideLayers(layer) {
                 if (layer._layers !== undefined) {
                     for (var guide in layer._layers) {
@@ -36,6 +37,8 @@
                         }
                     }
                 } else {
+                    // Lodash give a layer without reference and eliminate problems during edit layer which is in guide
+                    // layers
                     guideList.push(_.cloneDeep(layer));
                 }
             }
@@ -60,6 +63,8 @@
             marker.setOpacity(1);
             L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
             var latlng = marker.getLatLng();
+
+            // Search closest point to pin and if isn't null replace original latlng
             this._closest = this._findClosestMarker(this._map, this._guideList, latlng, this.options.distance, this.options.vertices);
             if (this._closest != null) {
                 marker._latlng = this._closest.latlng;
@@ -73,7 +78,10 @@
 
     });
 
+    // Additional map methods
+
     L.Map.Pin = {
+
         _pin_initialize: function () {
             this._guides = [];
             for (var i = 0; i < this.options.guideLayers.length; i++) {
@@ -97,12 +105,14 @@
     L.Map.include(L.Map.Pin);
     L.Map.addInitHook('_pin_initialize');
 
+    // Add pin options to map object
     L.Map.mergeOptions({
         pin: false,
         pinControl: false,
         guideLayers: []
     });
 
+    // Auto enable pin handler for drawing if pin option is enabled
     L.Draw.Feature.Pin = {
         _pin_initialize: function () {
             this.on('enabled', this._pin_on_enabled, this);
@@ -147,6 +157,7 @@
         }
     };
 
+    // Auto enable pin handler for editing features if pin option is enabled
     L.Edit.Marker.Pin = {
         _pin_initialize: function () {
             this._marker.on('dragstart', this._pin_on_dragstart, this);
@@ -171,6 +182,7 @@
     L.Draw.Feature.include(L.Draw.Feature.Pin);
     L.Draw.Feature.addInitHook('_pin_initialize');
 
+    // Custom control to toggle pin
     L.Control.Pin = L.Control.extend({
         options: {
             position: 'topleft'
