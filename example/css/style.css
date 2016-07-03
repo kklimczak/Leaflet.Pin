@@ -1,0 +1,62 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+header,
+section,
+footer,
+aside,
+nav,
+article,
+figure,
+audio,
+video,
+canvas  {
+  display:block;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  float: left;
+}
+
+.header {
+  top: 0;
+  right: 0;
+  box-sizing: border-box;
+  border-left: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+  background: #eeeeee;
+}
+
+.header h1 {
+  font-weight: 300;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.row {
+  font-family: "Source Sans Pro";
+  padding: 10px;
+  width: 40%;
+  position: absolute;
+  z-index: 10000;
+}
+
+.footer {;
+  bottom: 0;
+  right: 0;
+  background: #123;
+  color: white;
+}
+
+.footer a{
+  color: #fff;
+}
