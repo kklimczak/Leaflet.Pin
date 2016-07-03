@@ -4,11 +4,7 @@
   "description": "Enable attaching of markers to other layers during draw or edit features with Leaflet.Draw.",
   "main": [
     "dist/leaflet.pin.js",
-    "dist/leaflet.pin.css",
-    "dist/leaflet.pin.min.js",
-    "dist/leaflet.pin.min.css",
-    "dist/images/pin.png",
-    "dist/images/pin-disabled.png"
+    "dist/leaflet.pin.css"
   ],
   "ignore": [
     "**/.*",
