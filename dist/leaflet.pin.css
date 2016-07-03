@@ -11,10 +11,10 @@
 }
 
 .leaflet-control-pin a {
-    background: url("../images/pin-disabled.png");
+    background: url("images/pin-disabled.png");
     background-position: -2px -2px;
 }
 
 .leaflet-control-pin-enabled a {
-    background: url("../images/pin.png");
+    background: url("images/pin.png");
 }

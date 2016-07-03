@@ -15,11 +15,12 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'leaflet/js/leaflet.js',
-      'leaflet/js/leaflet.draw.js',
-      'leaflet/js/leaflet.geometryutil.js',
-      'js/leaflet.pin.js',
-      'tests/*.js'
+      '../assets/leaflet/js/leaflet.js',
+      '../assets/leaflet/js/leaflet.draw.js',
+      '../assets/leaflet/js/leaflet.geometryutil.js',
+      '../assets/vendor/js/lodash.min.js',
+      '../src/leaflet.pin.js',
+      '*.test.js'
     ],
 
 

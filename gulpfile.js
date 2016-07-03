@@ -1,11 +1,31 @@
-var gulp = require('gulp');
+var gulp = require('gulp'),
+    uglify = require('gulp-uglify'),
+    minifycss = require('gulp-clean-css'),
+    rename = require('gulp-rename');
 
-var generated = "leaflet/",
-    vendor = "vendor/",
+var generated = "assets/leaflet/",
+    vendor = "assets/vendor/",
     source = 'bower_components/';
 
-gulp.task('copy', function () {
+gulp.task('makeDist', function () {
 
+    gulp.src('src/leaflet.pin.js')
+        .pipe(uglify())
+        .pipe(rename('leaflet.pin.min.js'))
+        .pipe(gulp.dest('dist/'));
+
+    gulp.src('src/leaflet.pin.css')
+        .pipe(minifycss())
+        .pipe(rename('leaflet.pin.min.css'))
+        .pipe(gulp.dest('dist/'));
+
+    gulp.src([
+        'src/**/*'
+    ]).pipe(gulp.dest('dist/'));
+
+});
+
+gulp.task('copyAssets', function () {
     // Copy leaflet js files
 
     gulp.src([

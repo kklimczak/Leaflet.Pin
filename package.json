@@ -1,23 +1,35 @@
 {
-  "name": "leaflet-snap-polygon-dependencies",
-  "version": "1.0.0",
-  "description": "Leaflet.Snap.Polygon dependencies",
+  "name": "leaflet.pin",
+  "version": "0.1.0",
+  "description": "Enable attaching of markers to other layers during draw or edit features with Leaflet.Draw. ",
   "main": "gulpfile.js",
+  "directories": {
+    "example": "example"
+  },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start karma.conf.js"
+    "test": "./node_modules/karma/bin/karma start spec/karma.conf.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kklimczak/Leaflet.Snap.Polygon.git"
+    "url": "git+https://github.com/kklimczak/Leaflet.Pin.git"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "leaflet",
+    "pin",
+    "snap",
+    "draw"
+  ],
+  "author": "Konrad Klimczak",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kklimczak/Leaflet.Snap.Polygon/issues"
+    "url": "https://github.com/kklimczak/Leaflet.Pin/issues"
   },
-  "homepage": "http://konradklimczak.pl",
+  "homepage": "https://github.com/kklimczak/Leaflet.Pin#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.0.10",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.4",
     "jasmine-core": "2.4.1",
     "karma": "1.1.0",
     "karma-chrome-launcher": "1.0.1",

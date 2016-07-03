@@ -1,22 +1,36 @@
 {
-  "name": "leaflet-snap-polygon-dependencies",
-  "description": "Leaflet.Pin dependencies",
-  "main": "gulpfile.js",
-  "authors": [
-    "Konrad Klimczak <konrad.klimczak@comarch.com>"
+  "name": "leaflet-pin",
+  "version": "0.1.0",
+  "description": "Enable attaching of markers to other layers during draw or edit features with Leaflet.Draw.",
+  "main": [
+    "dist/leaflet.pin.js",
+    "dist/leaflet.pin.css",
+    "dist/leaflet.pin.min.js",
+    "dist/leaflet.pin.min.css",
+    "dist/images/pin.png",
+    "dist/images/pin-disabled.png"
   ],
-  "license": "ISC",
+  "ignore": [
+    "**/.*",
+    "src",
+    "example",
+    "spec",
+    "*.md",
+    "gulpfile.js",
+    "package.json",
+    "bower.json"
+  ],
+  "authors": [
+    "Konrad Klimczak"
+  ],
+  "license": "MIT",
   "keywords": [
     "leaflet",
+    "pin",
     "snap",
-    "polygon"
+    "draw"
   ],
-  "homepage": "https://github.com/kklimczak/Leaflet.Pin",
-  "moduleType": [
-    "es6",
-    "globals",
-    "node"
-  ],
+  "homepage": "http://konradklimczak.pl",
   "dependencies": {
     "leaflet": "0.7.7",
     "leaflet-draw": "0.2.4",
