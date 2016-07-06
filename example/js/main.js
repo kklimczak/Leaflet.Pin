@@ -1,5 +1,5 @@
 var map = L.map('map', {
-  pin: false,
+  pin: true,
   pinControl: true,
   guideLayers: []
 });
@@ -25,7 +25,7 @@ var drawControl = new L.Control.Draw({
     marker: {
       distance: 25
     },
-    rectangle: false,
+    rectangle: {},
     circle: {}
   },
   edit: {

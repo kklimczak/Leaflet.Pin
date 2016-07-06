@@ -120,6 +120,21 @@
         },
 
         _pin_on_enabled: function () {
+            if (this.type == 'circle' || this.type == 'rectangle') {
+                this._mouseMarker = L.marker(this._map.getCenter(), {
+                    icon: L.divIcon({
+                        className: 'leaflet-mouse-marker',
+                        iconAnchor: [20, 20],
+                        iconSize: [40, 40]
+                    }),
+                    opacity: 0,
+                    zIndexOffset: 1002
+                }).addTo(this._map);
+
+                this._map.on('mousemove', this._pin_on_mouse_move, this);
+                this._map.on('mousedown', this._pin_on_mouse_down, this);
+            }
+
             var marker = this._mouseMarker;
             if (!this._pinning) {
                 this._pinning = new L.Handler.MarkerPin(this._map);
@@ -135,6 +150,26 @@
 
 
             marker.on('click', this._pin_on_click, this);
+        },
+
+        _pin_on_mouse_down: function () {
+            if (this._pinning._closest) {
+                this._startLatLng = this._pinning._closest.latlng;
+            }
+        },
+
+        _pin_on_mouse_move: function (e) {
+            var latlng = e.latlng,
+                pinLatLng = this._pinning._closest;
+            if (this._shape) {
+                if (this._shape instanceof L.Circle) {
+                    this._shape.setRadius(this._startLatLng.distanceTo(pinLatLng ? pinLatLng.latlng : latlng));
+                } else if (this._shape instanceof L.Rectangle) {
+                    this._shape.setBounds(new L.LatLngBounds(this._startLatLng, pinLatLng ? pinLatLng.latlng : latlng));
+                }
+            }
+
+            this._mouseMarker.setLatLng(latlng);
         },
 
         _pin_on_click: function (e) {
@@ -153,6 +188,11 @@
         },
 
         _pin_on_disabled: function () {
+            if (this.type == 'circle' || this.type == 'rectangle') {
+                this._map.off('mousemove', this._pin_on_mouse_move, this);
+                this._map.off('mousedown', this._pin_on_mouse_down, this);
+                this._map.removeLayer(this._mouseMarker);
+            }
             delete this._pinning;
         }
     };

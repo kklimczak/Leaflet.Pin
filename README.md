@@ -10,8 +10,11 @@ It depends on [Leaflet.GeometryUtil](https://github.com/makinacorpus/Leaflet.Geo
 Plugin also required [Lodash](https://github.com/lodash/lodash) (Full).
 
 ## Usage ##
+You can download Leaflet.Pin from this repository or use bower
 
-Add `leaflet.draw.js`, `leaflet.geomtryutil.js`, `leaflet.pin.js` and `lodash.js`.
+`bower install leaflet-pin`
+
+After download add `leaflet.js`, `leaflet.draw.js`, `leaflet.geomtryutil.js`, `leaflet.pin.js` and `lodash.js` to your html file.
 
 #### Configuration
 
