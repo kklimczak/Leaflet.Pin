@@ -25,32 +25,6 @@
 
         _observeMarker: function (marker) {
             marker.on('move', this._updateLatLng, this);
-
-            var guideList = [];
-
-            // We need to parse layerGroup to single layers and each add to guides array.
-            function parseGuideLayers(layer) {
-                if (layer._layers !== undefined) {
-                    for (var guide in layer._layers) {
-                        if (layer._layers.hasOwnProperty(guide)) {
-                            parseGuideLayers(layer._layers[guide]);
-                        }
-                    }
-                } else {
-                    // Lodash give a layer without reference and eliminate problems during edit layer which is in guide
-                    // layers
-                    guideList.push(_.cloneDeep(layer));
-                }
-            }
-
-
-
-            for (var i = 0; i < this._map._guides.length; i++) {
-                var guide = this._map._guides[i];
-                parseGuideLayers(guide);
-            }
-
-            this._guideList = guideList;
         },
 
         _unobserveMarker: function () {
@@ -65,7 +39,7 @@
             var latlng = marker.getLatLng();
 
             // Search closest point to pin and if isn't null replace original latlng
-            this._closest = this._findClosestMarker(this._map, this._guideList, latlng, this.options.distance, this.options.vertices);
+            this._closest = this._findClosestMarker(this._map, this._map._guideList, latlng, this.options.distance, this.options.vertices);
             if (this._closest != null) {
                 marker._latlng = this._closest.latlng;
                 marker.update();
@@ -83,7 +57,8 @@
     L.Map.Pin = {
 
         _pin_initialize: function () {
-            this._guides = [];
+
+            this._guideList = [];
             for (var i = 0; i < this.options.guideLayers.length; i++) {
                 this.addGuideLayer(this.options.guideLayers[i]);
             }
@@ -97,9 +72,75 @@
             this.options.pin = !this.options.pin;
         },
 
+        removeGuideLayer: function (layer) {
+            for (var i = 0; i < this._guideList.length; i++) {
+                if (this._guideList[i]._leaflet_id == layer._leaflet_id) {
+                    this._guideList.splice(i, 1);
+                }
+            }
+        },
+
+        _parse: function (layer) {
+            var that = this;
+            if (layer instanceof L.FeatureGroup) {
+                layer.on('layeradd', function (e) {
+                    that._parse(e.layer);
+                });
+                layer.on('layerremove', function (e) {
+                    that.removeGuideLayer(e.layer);
+                });
+                for (var feature in layer._layers) {
+                    if (layer._layers.hasOwnProperty(feature)) {
+                        this._parse(layer._layers[feature]);
+                    }
+                }
+            } else {
+                if (layer instanceof L.Polyline || layer instanceof L.Polygon || layer instanceof L.Rectangle) {
+                    var poly = new L.polyline(L.LatLngUtil.cloneLatLngs(layer.getLatLngs()));
+                    poly._leaflet_id = layer._leaflet_id;
+                    this._guideList.push(poly);
+                } else {
+                    var marker = new L.marker(L.LatLngUtil.cloneLatLng(layer.getLatLng()));
+                    marker._leaflet_id = layer._leaflet_id;
+                    this._guideList.push(marker);
+                }
+            }
+        },
+
+        updateGuideLayer: function (id, latlng) {
+            for (var i = 0; i < this._guideList.length; i++) {
+                if (this._guideList[i]._leaflet_id == id) {
+                    if (latlng.length) {
+                        this._guideList[i].setLatLngs(L.LatLngUtil.cloneLatLngs(latlng));
+                    } else {
+                        this._guideList[i].setLatLng(L.LatLngUtil.cloneLatLng(latlng));
+                    }
+                }
+            }
+        },
+
         addGuideLayer: function (layer) {
-            this._guides.push(layer);
+            this._parse(layer);
         }
+
+        // TODO kklimczak: layer can not pin to itself during
+        // deleteGuideLayers: function (layer) {
+        //     console.log(layer);
+        //     for(var i = 0; i < this._guides.length; i++) {
+        //         console.log(this._guides[i] instanceof L.LayerGroup);
+        //         console.log(this._guides[i]);
+        //         if (this._guides[i] instanceof L.LayerGroup && this._guides[i].hasLayer(layer)) {
+        //             //this._guides[i].removeLayer(L.Util.stamp(layer));
+        //             this._currentDeletedGuideLayer = layer;
+        //             console.log(this._guides[i].hasLayer(layer), 'deleted')
+        //         } else {
+        //             if (L.Util.stamp(this._guides[i]) === L.Util.stamp(layer)) {
+        //                 this._guides[i] = undefined;
+        //                 console.log('deleted');
+        //             }
+        //         }
+        //     }
+        // }
     };
 
     L.Map.include(L.Map.Pin);
@@ -120,6 +161,21 @@
         },
 
         _pin_on_enabled: function () {
+            if (this.type == 'circle' || this.type == 'rectangle') {
+                this._mouseMarker = L.marker(this._map.getCenter(), {
+                    icon: L.divIcon({
+                        className: 'leaflet-mouse-marker',
+                        iconAnchor: [20, 20],
+                        iconSize: [40, 40]
+                    }),
+                    opacity: 0,
+                    zIndexOffset: 1002
+                }).addTo(this._map);
+
+                this._map.on('mousemove', this._pin_on_mouse_move, this);
+                this._map.on('mousedown', this._pin_on_mouse_down, this);
+            }
+
             var marker = this._mouseMarker;
             if (!this._pinning) {
                 this._pinning = new L.Handler.MarkerPin(this._map);
@@ -135,6 +191,26 @@
 
 
             marker.on('click', this._pin_on_click, this);
+        },
+
+        _pin_on_mouse_down: function () {
+            if (this._pinning._closest) {
+                this._startLatLng = this._pinning._closest.latlng;
+            }
+        },
+
+        _pin_on_mouse_move: function (e) {
+            var latlng = e.latlng,
+                pinLatLng = this._pinning._closest;
+            if (this._shape) {
+                if (this._shape instanceof L.Circle) {
+                    this._shape.setRadius(this._startLatLng.distanceTo(pinLatLng ? pinLatLng.latlng : latlng));
+                } else if (this._shape instanceof L.Rectangle) {
+                    this._shape.setBounds(new L.LatLngBounds(this._startLatLng, pinLatLng ? pinLatLng.latlng : latlng));
+                }
+            }
+
+            this._mouseMarker.setLatLng(latlng);
         },
 
         _pin_on_click: function (e) {
@@ -153,6 +229,11 @@
         },
 
         _pin_on_disabled: function () {
+            if (this.type == 'circle' || this.type == 'rectangle') {
+                this._map.off('mousemove', this._pin_on_mouse_move, this);
+                this._map.off('mousedown', this._pin_on_mouse_down, this);
+                this._map.removeLayer(this._mouseMarker);
+            }
             delete this._pinning;
         }
     };
@@ -168,11 +249,15 @@
             if (!this._marker._pinning) {
                 this._marker._pinning = new L.Handler.MarkerPin(this._marker._map);
             }
+            //this._marker._map.deleteGuideLayers(this._marker);
             this._marker._pinning.enable(this._marker);
+
         },
 
         _pin_on_dragend: function (e) {
             this._marker._pinning.disable(this._marker);
+            this._marker._map.updateGuideLayer(this._marker._leaflet_id, this._marker.getLatLng());
+            delete this._marker._pinning;
         }
     };
 
@@ -182,6 +267,33 @@
     L.Draw.Feature.include(L.Draw.Feature.Pin);
     L.Draw.Feature.addInitHook('_pin_initialize');
 
+    L.Edit.Poly.Pin = {
+        _pin_initialize: function () {
+            this._poly.on('edit', this._poly_edit, this);
+        },
+
+        _poly_edit: function () {
+            this._poly._map.updateGuideLayer(this._poly._leaflet_id, this._poly.getLatLngs());
+        }
+    };
+
+    L.Edit.Poly.include(L.Edit.Poly.Pin);
+    L.Edit.Poly.addInitHook('_pin_initialize');
+
+    L.Edit.SimpleShape.Pin = {
+        _pin_initialize: function () {
+            this._shape.on('edit', this._shape_edit_start, this);
+        },
+
+        _shape_edit_start: function () {
+            this._map.updateGuideLayer(this._shape._leaflet_id, this._shape.getLatLngs());
+        }
+    };
+
+    L.Edit.SimpleShape.include(L.Edit.SimpleShape.Pin);
+    L.Edit.SimpleShape.addInitHook('_pin_initialize');
+
+
     // Custom control to toggle pin
     L.Control.Pin = L.Control.extend({
         options: {
@@ -190,6 +302,7 @@
 
         onAdd: function (map) {
             this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-pin');
+            this._container.id = 'leaflet-pin-button';
             this._createButton();
             this._updateButton();
             return this._container;
