@@ -1,4 +1,5 @@
 # Leaflet.Pin
+[![Build Status](https://travis-ci.org/kklimczak/Leaflet.Pin.svg?branch=master)](https://travis-ci.org/kklimczak/Leaflet.Pin)
 
 #### General ##
 
@@ -7,11 +8,13 @@ Enable attaching of markers to other layers during draw or edit features with **
 #### Dependencies ##
 
 It depends on [Leaflet.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) and [Leaflet.Draw](https://github.com/Leaflet/Leaflet.draw).
-Plugin also required [Lodash](https://github.com/lodash/lodash) (Full).
 
 ## Usage ##
+You can download Leaflet.Pin from this repository or use bower
 
-Add `leaflet.draw.js`, `leaflet.geomtryutil.js`, `leaflet.pin.js` and `lodash.js`.
+`bower install leaflet-pin`
+
+After download add `leaflet.js`, `leaflet.draw.js`, `leaflet.geomtryutil.js`, `leaflet.pin.js` to your html file.
 
 #### Configuration
 
@@ -25,6 +28,7 @@ var map = L.map('map', {
   guideLayers: []
 });
 ```
+
 | Option | Type | Default | Description |
 |---|---|---|---|
 | pin | Boolean | false | Enable pin on map.|
@@ -61,7 +65,12 @@ For each feature (rectangle and circle not supported yet):
 
 | Method | Params | Description |
 |---|---|---|
-| addGuideLayer | ILayer or layerGroup | add new layer or layerGroup as guide layer/-s. |
+| addGuideLayer | ILayer or FeatureGroup | add new layer or FeatureGroup as guide layer/-s. Each added FeatureGroup is parsing to single guide layers. Additionally after add/remove layer to FeatureGroup, this layer is automatic added to/removed from guide layers container. |
+| removeGuideLayer | ILayer | remove single layer from guide layers container. |
 | togglePin | - | switch on/off pin |
+
+```
+map.addGuideLayer(new L.FeatureGroup());
+```
 
 This plugin based on [Leaflet.Snap](https://github.com/makinacorpus/Leaflet.Snap).

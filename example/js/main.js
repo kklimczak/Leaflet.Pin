@@ -1,5 +1,5 @@
 var map = L.map('map', {
-  pin: false,
+  pin: true,
   pinControl: true,
   guideLayers: []
 });
@@ -25,7 +25,7 @@ var drawControl = new L.Control.Draw({
     marker: {
       distance: 25
     },
-    rectangle: false,
+    rectangle: {},
     circle: {}
   },
   edit: {
@@ -46,6 +46,7 @@ L.geoJson(loadJson(), {
 });
 
 map.addGuideLayer(drawnItems);
+map.removeGuideLayer(drawnItems);
 
 
 map.addControl(drawControl);
@@ -53,7 +54,7 @@ map.addControl(drawControl);
 map.on('draw:created', function (e) {
   var layer = e.layer;
   drawnItems.addLayer(layer);
-  console.log(JSON.stringify(drawnItems.toGeoJSON()));
+  //console.log(JSON.stringify(drawnItems.toGeoJSON()));
 });
 
 
