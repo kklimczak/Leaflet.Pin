@@ -3,7 +3,10 @@ describe('Leaflet.Pin', function () {
     var map;
 
     beforeEach(function () {
-        map = new L.Map(L.DomUtil.create('div'), {pin: true});
+        map = new L.Map(L.DomUtil.create('div'), {
+            pin: true,
+            pinControl: true
+        });
     });
 
     describe('#add and parse guide layers', function () {

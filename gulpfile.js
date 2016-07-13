@@ -36,14 +36,6 @@ gulp.task('copyAssets', function () {
         cwd: source
     }).pipe(gulp.dest(generated + 'js/'));
 
-    // Copy vendor js files
-
-    gulp.src([
-        'lodash/dist/lodash.min.js'
-    ], {
-        cwd: source
-    }).pipe(gulp.dest(vendor + 'js/'));
-
     // Copy css files
 
     gulp.src([

@@ -80,18 +80,18 @@
             }
         },
 
-        parse: function (layer) {
+        _parse: function (layer) {
             var that = this;
             if (layer instanceof L.FeatureGroup) {
                 layer.on('layeradd', function (e) {
-                    that.parse(e.layer);
+                    that._parse(e.layer);
                 });
                 layer.on('layerremove', function (e) {
                     that.removeGuideLayer(e.layer);
                 });
                 for (var feature in layer._layers) {
                     if (layer._layers.hasOwnProperty(feature)) {
-                        this.parse(layer._layers[feature]);
+                        this._parse(layer._layers[feature]);
                     }
                 }
             } else {
@@ -120,7 +120,7 @@
         },
 
         addGuideLayer: function (layer) {
-            this.parse(layer);
+            this._parse(layer);
         }
 
         // TODO kklimczak: layer can not pin to itself during

@@ -46,6 +46,7 @@ L.geoJson(loadJson(), {
 });
 
 map.addGuideLayer(drawnItems);
+map.removeGuideLayer(drawnItems);
 
 
 map.addControl(drawControl);
