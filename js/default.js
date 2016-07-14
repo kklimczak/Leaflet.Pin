@@ -48,6 +48,25 @@ var loadJson = function () {
             "type": "Feature",
             "properties": {},
             "geometry": {"type": "Point", "coordinates": [19.473352432250977, 51.77230143349548]}
+        }, {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {"type": "Point", "coordinates": [19.371986389160156, 51.80075996280663]}
+        }, {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {"type": "Point", "coordinates": [19.371986389160156, 51.80075996280663]}
+        }, {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {"type": "Point", "coordinates": [19.457130432128906, 51.76571518651952]}
+        }, {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[[19.399452209472656, 51.714692361306376], [19.399452209472656, 51.73978578369455], [19.46279525756836, 51.73978578369455], [19.46279525756836, 51.714692361306376], [19.399452209472656, 51.714692361306376]]]
+            }
         }]
     }
 };
