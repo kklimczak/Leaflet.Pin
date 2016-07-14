@@ -35,7 +35,9 @@
             var marker = e.target;
 
             marker.setOpacity(1);
-            L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
+            if (!marker._shadow) {
+                L.DomUtil.addClass(marker._icon, 'leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-pin-marker');
+            }
             var latlng = marker.getLatLng();
 
             // Search closest point to pin and if isn't null replace original latlng
