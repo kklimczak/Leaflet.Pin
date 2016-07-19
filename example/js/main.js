@@ -1,5 +1,6 @@
 var map = L.map('map', {
   pin: true,
+  pinCircle: true,
   pinControl: true,
   guideLayers: []
 });
