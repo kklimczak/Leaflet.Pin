@@ -42,7 +42,14 @@
 
             // Search closest point to pin and if isn't null replace original latlng
             this._closest = this._findClosestMarker(this._map, this._map._guideList, latlng, this.options.distance, this.options.vertices);
-            if (this._closest != null) {
+            this._closestCircle = this._map.options.pinCircle ? this._findClosestCircle(this._map, this._map._circleGuideList, e.latlng) : null;
+
+
+            if (this._closestCircle != null) {
+                marker._latlng = this._closestCircle;
+                marker.update();
+
+            } else if (this._closest != null) {
                 marker._latlng = this._closest.latlng;
                 marker.update();
             }
@@ -50,6 +57,45 @@
 
         _findClosestMarker: function (map, guideList, latlng, distance, vertices) {
             return L.GeometryUtil.closestLayerSnap(map, guideList, latlng, distance, vertices);
+        },
+
+        _findClosestCircle: function (map, guideList, latlng) {
+            var closest = L.GeometryUtil.closestLayerSnap(map, guideList, latlng);
+
+            if (closest !== null) {
+                var x = closest.layer.getLatLng().lng - latlng.lng,
+                    y = closest.layer.getLatLng().lat - latlng.lat,
+                    tg = Math.abs(y) / Math.abs(x),
+                    alpha = Math.atan(tg),
+                    radius = closest.layer.editing._shape._radius;
+
+                var distanceStart = this._map.project(closest.latlng);
+                var distanceFinish = this._map.project(latlng);
+                var x2 = Math.abs(distanceFinish.x - distanceStart.x);
+                var y2 = Math.abs(distanceFinish.y - distanceStart.y);
+                var distance = Math.sqrt(Math.pow(x2, 2) + Math.pow(y2, 2));
+
+                if (radius + this.options.distance > distance && radius - this.options.distance < distance) {
+                    var a = radius * Math.cos(alpha),
+                        b = radius * Math.sin(alpha),
+                        point = this._map.project(closest.layer.getLatLng());
+
+                    if (x >= 0 && y >= 0) {
+                        return this._map.unproject([point.x - a, point.y + b]);
+                    } else if (x >= 0 && y < 0) {
+                        return this._map.unproject([point.x - a, point.y - b]);
+                    } else if (x < 0 && y < 0) {
+                        return this._map.unproject([point.x + a, point.y - b]);
+                    } else if (x < 0 && y >= 0) {
+                        return this._map.unproject([point.x + a, point.y + b]);
+                    }
+                } else if (this.options.distance > distance) {
+                    return closest.layer.getLatLng();
+                } else {
+                    return null;
+                }
+            }
+            return null;
         }
 
     });
@@ -61,6 +107,7 @@
         _pin_initialize: function () {
 
             this._guideList = [];
+            this._circleGuideList = [];
             for (var i = 0; i < this.options.guideLayers.length; i++) {
                 this.addGuideLayer(this.options.guideLayers[i]);
             }
@@ -105,8 +152,13 @@
                     var polyline = new L.polyline(L.LatLngUtil.cloneLatLngs(layer.getLatLngs()));
                     polyline._leaflet_id = layer._leaflet_id;
                     this._guideList.push(polyline);
-                }
-                else {
+                } else if (layer instanceof L.Circle) {
+                    var circle = new L.circle(L.LatLngUtil.cloneLatLng(layer.getLatLng(), JSON.parse(JSON.stringify(layer.getRadius()))));
+                    circle._mRadius = JSON.parse(JSON.stringify(layer.getRadius()));
+                    circle._leaflet_id = layer._leaflet_id;
+                    circle.editing = layer.editing;
+                    this._circleGuideList.push(circle);
+                } else {
                     var marker = new L.marker(L.LatLngUtil.cloneLatLng(layer.getLatLng()));
                     marker._leaflet_id = layer._leaflet_id;
                     this._guideList.push(marker);
@@ -156,6 +208,7 @@
     // Add pin options to map object
     L.Map.mergeOptions({
         pin: false,
+        pinCircle: false,
         pinControl: false,
         guideLayers: []
     });
@@ -201,14 +254,22 @@
         },
 
         _pin_on_mouse_down: function () {
-            if (this._pinning._closest) {
+            if (this._pinning._closestCircle) {
+                this._startLatLng = this._pinning._closestCircle;
+            } else if (this._pinning._closest) {
                 this._startLatLng = this._pinning._closest.latlng;
             }
         },
 
         _pin_on_mouse_move: function (e) {
             var latlng = e.latlng,
-                pinLatLng = this._pinning._closest;
+                pinLatLng = this._pinning._closest,
+                pinCircleLatLng = this._pinning._closestCircle;
+
+            if (pinCircleLatLng) {
+                pinLatLng = pinLatLng || {};
+                pinLatLng.latlng = pinCircleLatLng;
+            }
             if (this._shape) {
                 if (this._shape instanceof L.Circle) {
                     this._shape.setRadius(this._startLatLng.distanceTo(pinLatLng ? pinLatLng.latlng : latlng));

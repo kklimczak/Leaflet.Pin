@@ -3,7 +3,7 @@
 
 #### General ##
 
-Enable attaching of markers to other layers during draw or edit features with **Leaflet.Draw**. Checkout [demo](https://kklimczak.github.io/Leaflet.Pin/).
+Enable attaching markers to other layers during draw or edit features with **Leaflet.Draw**. Checkout [demo](https://kklimczak.github.io/Leaflet.Pin/).
 
 #### Dependencies ##
 
@@ -32,6 +32,7 @@ var map = L.map('map', {
 | Option | Type | Default | Description |
 |---|---|---|---|
 | pin | Boolean | false | Enable pin on map.|
+| pinCircle | Boolean | false | Enable pin to circle. It's a first implementation and could have some bugs. |
 | pinControl | Boolean | false | Enable Pin Control to toggle pin. |
 | guideLayers | Array | [] | Array containing guide layers. You can include single layer like L.Marker or layerGroup/FeatureGroup.
 **Feature option**
