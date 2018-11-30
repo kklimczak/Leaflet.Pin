@@ -168,9 +168,18 @@
 
         updateGuideLayer: function (id, latlng) {
             var theID = id;
-            var found = this._guideList.find(function (l) { l._leaflet_id === theID});
-            if (!found) {
-                found = this._circleGuideList.find(function (l) { l._leaflet_id === theID });
+            var found;
+            for(var i = 0; i < this._guideList.length; i++) {
+                if(this._guideList[i]._leaflet_id == theID) {
+                    found = this._guideList[i];
+                }
+            }
+            if(!found) {
+                for (var i = 0; i < this._circleGuideList.length; i++) {
+                    if (this._circleGuideList[i]._leaflet_id == theID) {
+                        found = this._circleGuideList[i];
+                    }
+                }
             }
             if (found) {
                 for (var i = 0; i < this._guideList.length; i++) {
