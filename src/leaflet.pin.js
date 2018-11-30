@@ -168,9 +168,9 @@
 
         updateGuideLayer: function (id, latlng) {
             var theID = id;
-            var found = this._guideList.find(function (l) { l._leaflet_id === theID});
+            var found = this._guideList.find(function (l) { return l._leaflet_id === theID});
             if (!found) {
-                found = this._circleGuideList.find(function (l) { l._leaflet_id === theID });
+                found = this._circleGuideList.find(function (l) { return l._leaflet_id === theID });
             }
             if (found) {
                 for (var i = 0; i < this._guideList.length; i++) {
