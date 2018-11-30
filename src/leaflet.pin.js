@@ -167,9 +167,10 @@
         },
 
         updateGuideLayer: function (id, latlng) {
-            let found = this._guideList.find(l => l._leaflet_id === id);
+            var theID = id;
+            var found = this._guideList.find(function (l) { l._leaflet_id === theID});
             if (!found) {
-                found = this._circleGuideList.find(l => l._leaflet_id === id);
+                found = this._circleGuideList.find(function (l) { l._leaflet_id === theID });
             }
             if (found) {
                 for (var i = 0; i < this._guideList.length; i++) {
@@ -182,7 +183,7 @@
                     }
                 }
             } else {
-                const layer = this._layers[id];
+                var layer = this._layers[id];
                 if (layer) {
                     if (
                         layer._icon &&
@@ -203,8 +204,10 @@
         },
 
         deleteGuideLayers: function (layer) {
-            let guideLayers =
-                layer instanceof L.Circle ? this._circleGuideList : this._guideList;
+            var guideLayers = this._guideList;
+            if(layer instanceof L.Circle) {
+                guideLayers = this._circleGuideList;
+            }
             for (var i = 0; i < guideLayers.length; i++) {
                 if (
                     guideLayers[i] instanceof L.LayerGroup &&

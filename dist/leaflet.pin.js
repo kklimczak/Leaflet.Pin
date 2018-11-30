@@ -167,12 +167,33 @@
         },
 
         updateGuideLayer: function (id, latlng) {
-            for (var i = 0; i < this._guideList.length; i++) {
-                if (this._guideList[i]._leaflet_id == id) {
-                    if (latlng.length) {
-                        this._guideList[i].setLatLngs(L.LatLngUtil.cloneLatLngs(latlng));
-                    } else {
-                        this._guideList[i].setLatLng(L.LatLngUtil.cloneLatLng(latlng));
+            var theID = id;
+            var found = this._guideList.find(function (l) { l._leaflet_id === theID});
+            if (!found) {
+                found = this._circleGuideList.find(function (l) { l._leaflet_id === theID });
+            }
+            if (found) {
+                for (var i = 0; i < this._guideList.length; i++) {
+                    if (this._guideList[i]._leaflet_id == id) {
+                        if (latlng.length) {
+                            this._guideList[i].setLatLngs(L.LatLngUtil.cloneLatLngs(latlng));
+                        } else {
+                            this._guideList[i].setLatLng(L.LatLngUtil.cloneLatLng(latlng));
+                        }
+                    }
+                }
+            } else {
+                var layer = this._layers[id];
+                if (layer) {
+                    if (
+                        layer._icon &&
+                        !L.DomUtil.hasClass(layer._icon, "leaflet-editing-icon")
+                    ) {
+                        this.addGuideLayer(layer);
+                    }
+
+                    if (!layer._icon) {
+                        this.addGuideLayer(layer);
                     }
                 }
             }
@@ -182,20 +203,30 @@
             this._parse(layer);
         },
 
-
         deleteGuideLayers: function (layer) {
-            for (var i = 0; i < this._guideList.length; i++) {
+            var guideLayers = this._guideList;
+            if(layer instanceof L.Circle) {
+                guideLayers = this._circleGuideList;
+            }
+            for (var i = 0; i < guideLayers.length; i++) {
                 if (
-                    this._guideList[i] instanceof L.LayerGroup &&
-                    this._guideList[i].hasLayer(layer)
+                    guideLayers[i] instanceof L.LayerGroup &&
+                    guideLayers[i].hasLayer(layer)
                 ) {
-                    this._guideList[i].removeLayer(L.Util.stamp(layer));
+                    guideLayers[i].removeLayer(L.Util.stamp(layer));
                 } else {
-                    if (L.Util.stamp(this._guideList[i]) === L.Util.stamp(layer)) {
-                        this._guideList = [].concat(
-                            this._guideList.slice(0, i),
-                            this._guideList.slice(i + 1)
-                        );
+                    if (L.Util.stamp(guideLayers[i]) === L.Util.stamp(layer)) {
+                        if (layer instanceof L.Circle) {
+                            this._circleGuideList = [].concat(
+                                guideLayers.slice(0, i),
+                                guideLayers.slice(i + 1)
+                            );
+                        } else {
+                            this._guideList = [].concat(
+                                guideLayers.slice(0, i),
+                                guideLayers.slice(i + 1)
+                            );
+                        }
                     }
                 }
             }
@@ -318,7 +349,7 @@
                 this._marker._pinning = new L.Handler.MarkerPin(this._marker._map);
             }
             this._marker._pinning.enable(this._marker);
-
+            this._marker._map.deleteGuideLayers(this._marker);
         },
 
         _pin_on_dragend: function (e) {
