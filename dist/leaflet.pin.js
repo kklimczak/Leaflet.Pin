@@ -180,26 +180,26 @@
 
         addGuideLayer: function (layer) {
             this._parse(layer);
-        }
+        },
 
-        // TODO kklimczak: layer can not pin to itself during
-        // deleteGuideLayers: function (layer) {
-        //     console.log(layer);
-        //     for(var i = 0; i < this._guides.length; i++) {
-        //         console.log(this._guides[i] instanceof L.LayerGroup);
-        //         console.log(this._guides[i]);
-        //         if (this._guides[i] instanceof L.LayerGroup && this._guides[i].hasLayer(layer)) {
-        //             //this._guides[i].removeLayer(L.Util.stamp(layer));
-        //             this._currentDeletedGuideLayer = layer;
-        //             console.log(this._guides[i].hasLayer(layer), 'deleted')
-        //         } else {
-        //             if (L.Util.stamp(this._guides[i]) === L.Util.stamp(layer)) {
-        //                 this._guides[i] = undefined;
-        //                 console.log('deleted');
-        //             }
-        //         }
-        //     }
-        // }
+
+        deleteGuideLayers: function (layer) {
+            for (var i = 0; i < this._guideList.length; i++) {
+                if (
+                    this._guideList[i] instanceof L.LayerGroup &&
+                    this._guideList[i].hasLayer(layer)
+                ) {
+                    this._guideList[i].removeLayer(L.Util.stamp(layer));
+                } else {
+                    if (L.Util.stamp(this._guideList[i]) === L.Util.stamp(layer)) {
+                        this._guideList = [].concat(
+                            this._guideList.slice(0, i),
+                            this._guideList.slice(i + 1)
+                        );
+                    }
+                }
+            }
+        }
     };
 
     L.Map.include(L.Map.Pin);
@@ -317,7 +317,6 @@
             if (!this._marker._pinning) {
                 this._marker._pinning = new L.Handler.MarkerPin(this._marker._map);
             }
-            //this._marker._map.deleteGuideLayers(this._marker);
             this._marker._pinning.enable(this._marker);
 
         },
@@ -338,6 +337,11 @@
     L.Edit.Poly.Pin = {
         _pin_initialize: function () {
             this._poly.on('edit', this._poly_edit, this);
+            this._poly.on("editstart", this._poly_edit_start, this);
+        },
+
+        _poly_check_self: function () {
+            this._poly._map.deleteGuideLayers(this._poly);
         },
 
         _poly_edit: function () {
