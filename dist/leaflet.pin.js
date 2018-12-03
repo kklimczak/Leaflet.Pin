@@ -167,12 +167,42 @@
         },
 
         updateGuideLayer: function (id, latlng) {
-            for (var i = 0; i < this._guideList.length; i++) {
-                if (this._guideList[i]._leaflet_id == id) {
-                    if (latlng.length) {
-                        this._guideList[i].setLatLngs(L.LatLngUtil.cloneLatLngs(latlng));
-                    } else {
-                        this._guideList[i].setLatLng(L.LatLngUtil.cloneLatLng(latlng));
+            var theID = id;
+            var found;
+            for(var i = 0; i < this._guideList.length; i++) {
+                if(this._guideList[i]._leaflet_id == theID) {
+                    found = this._guideList[i];
+                }
+            }
+            if(!found) {
+                for (var i = 0; i < this._circleGuideList.length; i++) {
+                    if (this._circleGuideList[i]._leaflet_id == theID) {
+                        found = this._circleGuideList[i];
+                    }
+                }
+            }
+            if (found) {
+                for (var i = 0; i < this._guideList.length; i++) {
+                    if (this._guideList[i]._leaflet_id == id) {
+                        if (latlng.length) {
+                            this._guideList[i].setLatLngs(L.LatLngUtil.cloneLatLngs(latlng));
+                        } else {
+                            this._guideList[i].setLatLng(L.LatLngUtil.cloneLatLng(latlng));
+                        }
+                    }
+                }
+            } else {
+                var layer = this._layers[id];
+                if (layer) {
+                    if (
+                        layer._icon &&
+                        !L.DomUtil.hasClass(layer._icon, "leaflet-editing-icon")
+                    ) {
+                        this.addGuideLayer(layer);
+                    }
+
+                    if (!layer._icon) {
+                        this.addGuideLayer(layer);
                     }
                 }
             }
@@ -180,26 +210,36 @@
 
         addGuideLayer: function (layer) {
             this._parse(layer);
-        }
+        },
 
-        // TODO kklimczak: layer can not pin to itself during
-        // deleteGuideLayers: function (layer) {
-        //     console.log(layer);
-        //     for(var i = 0; i < this._guides.length; i++) {
-        //         console.log(this._guides[i] instanceof L.LayerGroup);
-        //         console.log(this._guides[i]);
-        //         if (this._guides[i] instanceof L.LayerGroup && this._guides[i].hasLayer(layer)) {
-        //             //this._guides[i].removeLayer(L.Util.stamp(layer));
-        //             this._currentDeletedGuideLayer = layer;
-        //             console.log(this._guides[i].hasLayer(layer), 'deleted')
-        //         } else {
-        //             if (L.Util.stamp(this._guides[i]) === L.Util.stamp(layer)) {
-        //                 this._guides[i] = undefined;
-        //                 console.log('deleted');
-        //             }
-        //         }
-        //     }
-        // }
+        deleteGuideLayers: function (layer) {
+            var guideLayers = this._guideList;
+            if(layer instanceof L.Circle) {
+                guideLayers = this._circleGuideList;
+            }
+            for (var i = 0; i < guideLayers.length; i++) {
+                if (
+                    guideLayers[i] instanceof L.LayerGroup &&
+                    guideLayers[i].hasLayer(layer)
+                ) {
+                    guideLayers[i].removeLayer(L.Util.stamp(layer));
+                } else {
+                    if (L.Util.stamp(guideLayers[i]) === L.Util.stamp(layer)) {
+                        if (layer instanceof L.Circle) {
+                            this._circleGuideList = [].concat(
+                                guideLayers.slice(0, i),
+                                guideLayers.slice(i + 1)
+                            );
+                        } else {
+                            this._guideList = [].concat(
+                                guideLayers.slice(0, i),
+                                guideLayers.slice(i + 1)
+                            );
+                        }
+                    }
+                }
+            }
+        }
     };
 
     L.Map.include(L.Map.Pin);
@@ -317,9 +357,8 @@
             if (!this._marker._pinning) {
                 this._marker._pinning = new L.Handler.MarkerPin(this._marker._map);
             }
-            //this._marker._map.deleteGuideLayers(this._marker);
             this._marker._pinning.enable(this._marker);
-
+            this._marker._map.deleteGuideLayers(this._marker);
         },
 
         _pin_on_dragend: function (e) {
@@ -338,6 +377,11 @@
     L.Edit.Poly.Pin = {
         _pin_initialize: function () {
             this._poly.on('edit', this._poly_edit, this);
+            this._poly.on("editstart", this._poly_edit_start, this);
+        },
+
+        _poly_check_self: function () {
+            this._poly._map.deleteGuideLayers(this._poly);
         },
 
         _poly_edit: function () {

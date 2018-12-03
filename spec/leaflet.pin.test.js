@@ -69,6 +69,7 @@ describe('Leaflet.Pin', function () {
             expect(equals).toBeTruthy();
         });
 
+
         it('add layer to FeatureGroup guide layer', function () {
             featureGroup.addLayer(poly);
 
@@ -78,8 +79,20 @@ describe('Leaflet.Pin', function () {
         it('remove layer from FeatureGroup guide layer', function () {
             featureGroup.addLayer(poly);
             featureGroup.removeLayer(poly);
-            
+
             expect(map._guideList.length).toEqual(4);
+        });
+
+        it("remove marker from guideList", function () {
+            map.deleteGuideLayers(marker);
+
+            expect(map._guideList.indexOf(marker) == -1);
+        });
+
+        it("remove poly from guideList", function() {
+            featureGroup.addLayer(poly);
+            map.deleteGuideLayers(poly);
+            expect(map._guideList.indexOf(poly) == -1);
         })
     });
 });
