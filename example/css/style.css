@@ -17,8 +17,8 @@ article,
 figure,
 audio,
 video,
-canvas  {
-  display:block;
+canvas {
+  display: block;
 }
 
 #map {
@@ -50,13 +50,13 @@ canvas  {
   z-index: 10000;
 }
 
-.footer {;
+.footer {
   bottom: 0;
   right: 0;
   background: #123;
   color: white;
 }
 
-.footer a{
+.footer a {
   color: #fff;
 }

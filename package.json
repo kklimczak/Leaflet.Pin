@@ -1,33 +1,53 @@
 {
-  "name": "leaflet.pin",
-  "version": "0.1.0",
-  "description": "Enable attaching of markers to other layers during draw or edit features with Leaflet.Draw. ",
-  "directories": {
-    "example": "example"
-  },
-  "scripts": {
-    "test": "./node_modules/karma/bin/karma start spec/karma.conf.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kklimczak/Leaflet.Pin.git"
-  },
-  "keywords": [
-    "leaflet",
-    "pin",
-    "snap",
-    "draw"
-  ],
-  "author": "Konrad Klimczak",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/kklimczak/Leaflet.Pin/issues"
-  },
-  "homepage": "https://github.com/kklimczak/Leaflet.Pin#readme",
-  "peerDependencies": {
-    "leaflet": "^1.6.0"
-  },
-  "devDependencies": {
-    "leaflet": "^1.6.0"
-  }
+    "name": "leaflet.pin",
+    "version": "0.1.0",
+    "description": "Enable attaching of markers to other layers during draw or edit features with Leaflet.Draw. ",
+    "directories": {
+        "example": "example"
+    },
+    "scripts": {
+        "test": "./node_modules/karma/bin/karma start spec/karma.conf.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kklimczak/Leaflet.Pin.git"
+    },
+    "keywords": [
+        "leaflet",
+        "pin",
+        "snap",
+        "draw"
+    ],
+    "author": "Konrad Klimczak",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/kklimczak/Leaflet.Pin/issues"
+    },
+    "homepage": "https://github.com/kklimczak/Leaflet.Pin#readme",
+    "peerDependencies": {
+        "leaflet": "^1.6.0"
+    },
+    "devDependencies": {
+        "cz-conventional-changelog": "^3.1.0",
+        "husky": "^4.2.3",
+        "leaflet": "1.6.0",
+        "lint-staged": "^10.1.1",
+        "prettier": "2.0.2"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.js": [
+            "prettier --write",
+            "git add"
+        ]
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
+    }
 }
