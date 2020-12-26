@@ -1,11 +1,14 @@
 import { map, tileLayer } from 'leaflet';
 import './styles.scss';
 import './github.png';
+import data from './data.json';
 
 document.addEventListener('DOMContentLoaded', runExample);
 
 function runExample() {
   const mapRef = createMapWithTiles();
+
+  console.log(data);
 }
 
 function createMapWithTiles() {
